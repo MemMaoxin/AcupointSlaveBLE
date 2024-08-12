@@ -91,12 +91,12 @@
 #define LEDBUTTON_LED                   BSP_BOARD_LED_2                         /**< LED to be toggled with the help of the LED Button Service. */
 #define LEDBUTTON_BUTTON                BSP_BUTTON_0                            /**< Button that will trigger the notification event with the LED Button Service */
 
-#define DEVICE_NAME                     "Acupoint12"                         /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "Acupoint50"                         /**< Name of device. Will be included in the advertising data. */
 
 #define APP_BLE_OBSERVER_PRIO           3                                       /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 #define APP_BLE_CONN_CFG_TAG            1                                       /**< A tag identifying the SoftDevice BLE configuration. */
 
-#define APP_ADV_INTERVAL                6400                                      /**< The advertising interval (in units of 0.625 ms; this value corresponds to 40 ms). */
+#define APP_ADV_INTERVAL                640                                      /**< The advertising interval (in units of 0.625 ms; this value corresponds to 40 ms). */
 #define APP_ADV_DURATION                BLE_GAP_ADV_TIMEOUT_GENERAL_UNLIMITED   /**< The advertising time-out (in units of seconds). When set to 0, we will never time out. */
 
 
@@ -115,7 +115,7 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
-
+#define WGSR_ON                30
 BLE_LBS_DEF(m_lbs);                                                             /**< LED Button Service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr); 
@@ -882,7 +882,7 @@ void saadc_sigle_start()
  * */
 		//app_sdc_init();
 
-		nrf_gpio_pin_set(31);
+		nrf_gpio_pin_set(WGSR_ON);
 		nrf_delay_us(1500);
 		//	fatfs_file_write();
 		fatfs_disk_init_uninit();//必须先int并uninit一次，否则无法低功耗，电流会在18mA左右
@@ -903,7 +903,7 @@ void saadc_sigle_end()
 		nrf_gpio_pin_clear(	SDC_CS_PIN);		
 		*/
 		nrf_delay_us(1500);
-		nrf_gpio_pin_clear(31);
+		nrf_gpio_pin_clear(WGSR_ON);
 		nrf_drv_timer_disable(&m_timer);
 		nrf_gpio_pin_clear(A1);
 		nrf_gpio_pin_clear(A0);
@@ -1300,8 +1300,10 @@ int main(void)
 	  nrf_gpio_cfg_output(A1);
 		nrf_gpio_pin_clear(A1);
 		nrf_gpio_pin_clear(A0);
-		nrf_gpio_cfg_output(31);//负载开关引脚
-		nrf_gpio_pin_clear(31);
+		nrf_gpio_cfg_output(WGSR_ON);//负载开关引脚
+		nrf_gpio_pin_clear(WGSR_ON);
+		
+		NRF_LOG_INFO("Acupoint example started111.");
 		
 
 		
@@ -1318,7 +1320,7 @@ int main(void)
 
 		//application_timers_start();
     // Start execution.
-    NRF_LOG_INFO("ADG804 example started.");
+    NRF_LOG_INFO("Acupoint example started.");
 		//fatfs_example();
     advertising_start();
 		fatfs_register();
@@ -1371,13 +1373,13 @@ int main(void)
 			//收到读取文件指令
 			if(read_file_flag){
 				//开启负载开关
-				nrf_gpio_pin_set(31);
+				nrf_gpio_pin_set(WGSR_ON);
 				nrf_delay_us(1300);
 				//读取数据
 				fatfs_file_read();
 				nrf_delay_us(750);
 				//关闭负载开关
-				nrf_gpio_pin_clear(31);
+				nrf_gpio_pin_clear(WGSR_ON);
 				read_file_flag = false;
 			}
 			//收到获取时间戳指令

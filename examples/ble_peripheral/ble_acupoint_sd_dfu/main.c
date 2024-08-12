@@ -1031,6 +1031,7 @@ void saadc_init(void)
 int count=0;
 uint8_t  DataRead[32];
 int16_t last_acu_data[3];
+int switch_pos=0;
 
 void select_loc(int loc){
 		if(loc==0)
@@ -1047,47 +1048,29 @@ void select_loc(int loc){
 			nrf_gpio_pin_clear(A0);		
 		}
 }
-int switch_pos=0;
-int switch_times=2;//几个10ms
-int switch_control=0;
 
 static void thi_monitor_handler(void)
 {
-	//uint32_t now_timeStamp=RTC_GetTime();
-	//NRF_LOG_INFO("Now Time==: %d ", now_timeStamp);
-
-	
-	if(switch_control>switch_times)
-	{
-		switch_control=0;
-		count=0;
-		switch_pos++;
-		select_loc(switch_pos%3);
-		
-	}
-	
 	nrf_saadc_value_t  saadc_val = 0;
 	nrf_drv_saadc_sample_convert(0,&saadc_val);
 	
-	//更新last_acu_data数组，维护最后的采集值
-	last_acu_data[switch_pos%3] = saadc_val;
-
 	DataRead[2 * count] = (saadc_val >> 8);;
 	DataRead[2 * count + 1] = saadc_val;		
 	
+	switch_pos++;
+	select_loc(switch_pos%3);
+	
 	count++;
-	if(count>=5)
-	{	
-		DataRead[2 * count] = switch_pos%3;
-		DataRead[2 * count + 1] = switch_pos%3;
-		count=0;
-		switch_control++;
+	
+	if (count >= 9) {
+		count = 0;
+		switch_pos = 0;
+		
 		if(m_conn_handle!=BLE_CONN_HANDLE_INVALID && real_time_trans == true)
 		{
-			ble_lbs_on_button_change1(m_conn_handle, &m_lbs, DataRead, 12);
+			ble_lbs_on_button_change1(m_conn_handle, &m_lbs, DataRead, 18);
 		}	
 	}
-
 }
 
 //定时器超时中断操作

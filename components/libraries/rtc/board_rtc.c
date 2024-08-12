@@ -116,12 +116,12 @@ static void rtcCallbackFunc(nrf_drv_rtc_int_type_t interruptType)
             s_timeCount1second = 0;
             g_timestamp++;
 					//判断是否是7200的倍数，若是，则令timer_state加1并将timer_state_change设为true
-						if(g_timestamp % 7200 == 0){
+						if(g_timestamp % 20 == 0){
 							timer_state++;
 							timer_state_change = true;
 							timer_saadc_stop_flag = true;
 						}
-						if(g_timestamp % 7200 == 300 && timer_saadc_stop_flag){
+						if(g_timestamp % 20 == 5 && timer_saadc_stop_flag){
 							timer_saadc_stop = true;
 							timer_saadc_stop_flag = false;
 						}
