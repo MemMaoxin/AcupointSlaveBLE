@@ -150,11 +150,11 @@ uint32_t ble_lbs_on_button_change(uint16_t conn_handle, ble_lbs_t * p_lbs, uint8
 
     return sd_ble_gatts_hvx(conn_handle, &params);
 }
-uint32_t ble_lbs_on_button_change1(uint16_t conn_handle, ble_lbs_t * p_lbs, uint8_t * button_state)
+uint32_t ble_lbs_on_button_change1(uint16_t conn_handle, ble_lbs_t * p_lbs, uint8_t * button_state, int length)
 {
     ble_gatts_hvx_params_t params;
     //uint16_t len = sizeof(button_state);
-		uint16_t len = 12;
+		uint16_t len = length;
 	  uint32_t err_code;
 		  if (conn_handle != BLE_CONN_HANDLE_INVALID)
 		{

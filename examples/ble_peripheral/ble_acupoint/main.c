@@ -78,7 +78,7 @@
 #define LEDBUTTON_LED                   BSP_BOARD_LED_2                         /**< LED to be toggled with the help of the LED Button Service. */
 #define LEDBUTTON_BUTTON                BSP_BUTTON_0                            /**< Button that will trigger the notification event with the LED Button Service */
 
-#define DEVICE_NAME                     "Acupoint"                         /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "Acupoint1"                         /**< Name of device. Will be included in the advertising data. */
 
 #define APP_BLE_OBSERVER_PRIO           3                                       /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 #define APP_BLE_CONN_CFG_TAG            1                                       /**< A tag identifying the SoftDevice BLE configuration. */
@@ -588,8 +588,11 @@ void saadc_init(void)
 }
 #define A0 8
 #define A1 6
+
 int count=0;
 uint8_t  DataRead[32];
+int switch_pos=0;
+
 void select_loc(int loc){
 		if(loc==0)
 		{
@@ -605,11 +608,11 @@ void select_loc(int loc){
 			nrf_gpio_pin_clear(A0);		
 		}
 }
-int switch_pos=0;
-int switch_times=2;//¼¸¸ö10ms
-int switch_control=0;
+
+
 static void thi_monitor_handler(void)
 {
+	/*
 	if(switch_control>switch_times)
 	{
 		switch_control=0;
@@ -635,6 +638,27 @@ static void thi_monitor_handler(void)
 		if(m_conn_handle!=BLE_CONN_HANDLE_INVALID)
 		{
 			ble_lbs_on_button_change1(m_conn_handle, &m_lbs, DataRead);
+		}	
+	}
+	*/
+	nrf_saadc_value_t  saadc_val = 0;
+	nrf_drv_saadc_sample_convert(0,&saadc_val);
+	
+	DataRead[2 * count] = (saadc_val >> 8);;
+	DataRead[2 * count + 1] = saadc_val;		
+	
+	switch_pos++;
+	select_loc(switch_pos%3);
+	
+	count++;
+	
+	if (count >= 9) {
+		count = 0;
+		switch_pos = 0;
+		
+		if(m_conn_handle!=BLE_CONN_HANDLE_INVALID)
+		{
+			ble_lbs_on_button_change1(m_conn_handle, &m_lbs, DataRead, 18);
 		}	
 	}
 

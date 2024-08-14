@@ -163,7 +163,7 @@ void ble_lbs_on_ble_evt(ble_evt_t const * p_ble_evt, void * p_context);
  * @retval NRF_SUCCESS If the notification was sent successfully. Otherwise, an error code is returned.
  */
 uint32_t ble_lbs_on_button_change(uint16_t conn_handle, ble_lbs_t * p_lbs, uint8_t  button_state);
-uint32_t ble_lbs_on_button_change1(uint16_t conn_handle, ble_lbs_t * p_lbs, uint8_t * button_state);
+uint32_t ble_lbs_on_button_change1(uint16_t conn_handle, ble_lbs_t * p_lbs, uint8_t * button_state, int length);
 uint32_t ble_lbs_on_XX_change(uint16_t conn_handle, ble_lbs_t * p_lbs, uint8_t*  button_state);
 
 #ifdef __cplusplus

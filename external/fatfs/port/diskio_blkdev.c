@@ -137,20 +137,17 @@ DSTATUS disk_uninitialize(BYTE drv)
 
     if (drv >= m_drives_count)
     {
-				NRF_LOG_INFO("drv >= m_drives_count");
         return (STA_NODISK | STA_NOINIT);
     }
 
     if (!m_drives[drv].config.p_block_device)
     {
-			NRF_LOG_INFO("!m_drives[drv].config.p_block_device");
         return (STA_NODISK | STA_NOINIT);
     }
 
     if (m_drives[drv].state & STA_NOINIT)
     {
         // Disk already uninitialized.
-			NRF_LOG_INFO("m_drives[drv].state & STA_NOINIT");
         return m_drives[drv].state;
     }
 
@@ -161,7 +158,6 @@ DSTATUS disk_uninitialize(BYTE drv)
     do
     {
         /*Perform synchronous uninit.*/
-				NRF_LOG_INFO("nrf_blk_dev_uninit");
         ret = nrf_blk_dev_uninit(m_drives[drv].config.p_block_device);
     } while (ret == NRF_ERROR_BUSY);
 
